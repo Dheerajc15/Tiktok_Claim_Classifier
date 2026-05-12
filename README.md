@@ -68,46 +68,61 @@ Text n-grams and author metadata contribute secondary signal.
 
 ## Repo structure
 
-```
+​```
 .
-├── TikTok_End_to_End_Analysis.ipynb   # Full analysis — all four phases
-├── tiktok_dataset.csv                 # Input data 
-├── requirements.txt                   # Pinned dependencies
+├── data/
+│   └── tiktok_dataset.csv               
+├── notebook/
+│   └── TikTok_End_to_End_Analysis.ipynb # Full analysis — EDA, statistical testing, modeling
+├── src/
+│   ├── __init__.py
+│   ├── preprocessing.py                 # Reusable data-prep pipeline
+│   └── train.py                         # MLflow-tracked training (RF + XGBoost)
+├── docs/
+│   └── mlflow_screenshots/              # MLflow UI captures
+├── MLproject                            # MLflow project definition
+├── python_env.yaml                      # Environment spec for `mlflow run`
+├── requirements.txt                     # Pinned dependencies
+├── .gitignore
 └── README.md
-```
+​```
 
 ## Getting started
 
-```bash
+​```bash
 # Clone and set up environment
-git clone <repo-url>
-cd tiktok-claim-classifier
+git clone https://github.com/Dheerajc15/Tiktok_Claim_Classifier.git
+cd Tiktok_Claim_Classifier
 
 python -m venv venv
 source venv/bin/activate          # On Windows: venv\Scripts\activate
 
 pip install -r requirements.txt
 
-# Place tiktok_dataset.csv in the repo root, then:
-jupyter notebook TikTok_End_to_End_Analysis.ipynb
-```
+# Option 1: Run the full analysis notebook
+jupyter notebook notebook/TikTok_End_to_End_Analysis.ipynb
 
-**Note on the dataset:** `tiktok_dataset.csv` is the Coursera Google Advanced Data Analytics Professional Certificate TikTok dataset. It is not redistributed here.
+# Option 2: Run the MLflow-tracked training pipeline
+python src/train.py
+mlflow ui --backend-store-uri sqlite:///mlflow.db
+​```
 
 ## Caveats
 
-- The model relies heavily on engagement counts. If TikTok's recommendation algorithm changes how claims get distributed, the engagement-based decision rules may stop holding.
-- The dataset is a snapshot — no temporal features. View-velocity in the first 24 hours would likely add signal.
-- Feature importance from tree ensembles is correlational, not causal. High views don't *cause* a video to be a claim; they co-occur with it in this data.
+* The model relies heavily on engagement counts. If TikTok's recommendation algorithm changes how claims get distributed, the engagement-based decision rules may stop holding.
+* The dataset is a snapshot — no temporal features. View-velocity in the first 24 hours would likely add signal.
+* Feature importance from tree ensembles is correlational, not causal. High views don't *cause* a video to be a claim; they co-occur with it in this data.
+* Test-set metrics this high suggest the task itself is largely solvable from engagement signal alone. Real production data with adversarial creators would likely be harder.
 
 ## Next steps
 
-- **Threshold tuning.** Move off the default 0.5 cutoff; tune on the precision-recall curve to match moderation team capacity.
-- **Velocity features.** Compute view-acceleration in the first 24 hours if timestamp data becomes available.
-- **Richer text features.** Count hedging words (*maybe, I think*), assertion words (*proven, fact*), presence of numeric claims.
-- **Drift monitoring.** Alert on shifts in the engagement-count distributions and retrain on a schedule.
-- **Multi-class extension.** Classify *type* of claim (health, financial, political) to route reports to specialized review queues.
+* **Threshold tuning.** Move off the default 0.5 cutoff; tune on the precision-recall curve to match moderation team capacity.
+* **Velocity features.** Compute view-acceleration in the first 24 hours if timestamp data becomes available.
+* **Richer text features.** Count hedging words (*maybe, I think*), assertion words (*proven, fact*), presence of numeric claims.
+* **Drift monitoring.** Alert on shifts in the engagement-count distributions and retrain on a schedule.
+* **Multi-class extension.** Classify *type* of claim (health, financial, political) to route reports to specialized review queues.
+* **Model serving.** Wrap the registered RF model in a FastAPI endpoint for real-time inference.
 
 ## Tech stack
 
-Python 3.11 · pandas · NumPy · scikit-learn · XGBoost · SciPy · Matplotlib · Seaborn
+Python 3.11 · pandas · NumPy · scikit-learn · XGBoost · SciPy · Matplotlib · Seaborn · **MLflow** (tracking + Model Registry)
