@@ -38,3 +38,11 @@ desktop.ini
 # Environment variables
 .env
 .env.local
+
+# MLflow
+mlruns/
+mlartifacts/
+mlflow.db
+
+__pycache__/
+*.pyc
