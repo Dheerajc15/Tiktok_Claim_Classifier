@@ -40,13 +40,14 @@ Four sequential phases following the **PACE framework**:
 **Champion model: Random Forest**
 
 | Metric | Validation | Test |
-|---|---|---|
-| Recall (claim) | 0.99 | **1.00** |
-| Precision (claim) | 1.00 | **1.00** |
-| F1 (claim) | 1.00 | **1.00** |
-| Accuracy | 1.00 | **1.00** |
+| --- | --- | --- |
+| Recall (claim) | 0.9969 | **0.9974** |
+| Precision (claim) | 1.0000 | **1.0000** |
+| F1 (claim) | 0.9984 | **0.9987** |
+| ROC-AUC | 0.9996 | **0.9999** |
+| Accuracy | 0.9984 | **0.9987** |
 
-XGBoost matched Random Forest's performance (recall 0.99, precision 1.00 on validation). Random Forest was selected as the champion because it trains faster and is easier to interpret for moderation stakeholders.
+XGBoost was a close runner-up (test recall 0.9917, precision 0.9995, F1 0.9956). Random Forest was selected as the champion for slightly higher recall on the claim class — the cost-weighted metric for this problem — combined with simpler interpretability for moderation stakeholders.
 
 ### Top predictive features
 
